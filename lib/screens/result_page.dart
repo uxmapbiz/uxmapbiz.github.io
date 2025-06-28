@@ -14,8 +14,10 @@ class _ResultPageState extends State<ResultPage> {
   @override
   Widget build(BuildContext context) {
     // Expect a Map (from backend API JSON)
-    final result = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-
+    final result =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    print("ResultPage received: $result");
+    
     Widget content;
     switch (_selectedIndex) {
       case 0:
@@ -28,9 +30,7 @@ class _ResultPageState extends State<ResultPage> {
         // Only show summary, NOT elements
         final summary = result?['summary'] ?? '';
         content = Text(
-          summary.isNotEmpty
-              ? summary
-              : 'No UX analysis result to display.',
+          summary.isNotEmpty ? summary : 'No UX analysis result to display.',
           style: const TextStyle(fontSize: 16),
         );
         break;
@@ -54,9 +54,7 @@ class _ResultPageState extends State<ResultPage> {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(32.0),
-              child: SingleChildScrollView(
-                child: content,
-              ),
+              child: SingleChildScrollView(child: content),
             ),
           ),
         ],
