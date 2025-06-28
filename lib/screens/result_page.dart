@@ -16,8 +16,9 @@ class _ResultPageState extends State<ResultPage> {
     // Expect a Map (from backend API JSON)
     final result =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-    print("ResultPage received: $result");
-    
+    final aiAnalysis = result?['ai_analysis'] ?? '';
+    print("aiAnalysis: $aiAnalysis");
+
     Widget content;
     switch (_selectedIndex) {
       case 0:
@@ -28,7 +29,7 @@ class _ResultPageState extends State<ResultPage> {
         break;
       case 1:
         // Only show summary, NOT elements
-        final summary = result?['summary'] ?? '';
+        final summary = result?['ai_analysis'] ?? '';
         content = Text(
           summary.isNotEmpty ? summary : 'No UX analysis result to display.',
           style: const TextStyle(fontSize: 16),
