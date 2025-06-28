@@ -16,8 +16,6 @@ class _ResultPageState extends State<ResultPage> {
     // Expect a Map (from backend API JSON)
     final result =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-    final aiAnalysis = result?['ai_analysis'] ?? '';
-    print("aiAnalysis: $aiAnalysis");
 
     Widget content;
     switch (_selectedIndex) {
@@ -29,11 +27,40 @@ class _ResultPageState extends State<ResultPage> {
         break;
       case 1:
         // Only show summary, NOT elements
-        final summary = result?['ai_analysis'] ?? '';
-        content = Text(
-          summary.isNotEmpty ? summary : 'No UX analysis result to display.',
-          style: const TextStyle(fontSize: 16),
+        final aiAnalysis =
+            result?['ai_analysis'] as Map<String, dynamic>? ?? {};
+        final summary = aiAnalysis['summary'] ?? '';
+        final uxScore = aiAnalysis['ux_score'];
+        final reason = aiAnalysis['reason'] ?? '';
+
+        content = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (uxScore != null)
+              Text(
+                'UX Score: $uxScore/100',
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            if (summary.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Text(summary, style: const TextStyle(fontSize: 16)),
+            ],
+            if (reason.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Text(
+                'Reason: $reason',
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ],
+          ],
         );
+
         break;
       default:
         content = const SizedBox();
