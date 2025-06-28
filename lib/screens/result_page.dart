@@ -32,6 +32,7 @@ class _ResultPageState extends State<ResultPage> {
         final summary = aiAnalysis['summary'] ?? '';
         final uxScore = aiAnalysis['ux_score'];
         final reason = aiAnalysis['reason'] ?? '';
+        final improvements = aiAnalysis['improvements'] ?? '';
 
         content = Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,7 +59,16 @@ class _ResultPageState extends State<ResultPage> {
                 ),
               ),
             ],
-          ],
+            if (improvements.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              Text(
+                'Improvement Suggestions:',
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            ),
+              const SizedBox(height: 8),
+              Text(improvements, style: const TextStyle(fontSize: 16)),
+            ],
+          ], 
         );
 
         break;
