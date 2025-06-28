@@ -13,7 +13,8 @@ class _ResultPageState extends State<ResultPage> {
 
   @override
   Widget build(BuildContext context) {
-    final result = ModalRoute.of(context)?.settings.arguments as String? ?? '';
+    // Expect a Map (from backend API JSON)
+    final result = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
 
     Widget content;
     switch (_selectedIndex) {
@@ -24,15 +25,17 @@ class _ResultPageState extends State<ResultPage> {
         );
         break;
       case 1:
+        // Only show summary, NOT elements
+        final summary = result?['summary'] ?? '';
         content = Text(
-          result.isNotEmpty
-              ? result
-              : 'No analysis result to display.',
+          summary.isNotEmpty
+              ? summary
+              : 'No UX analysis result to display.',
           style: const TextStyle(fontSize: 16),
         );
         break;
       default:
-        content = const SizedBox(); // Unused, as tab 2 triggers Go Home directly
+        content = const SizedBox();
     }
 
     return Scaffold(
