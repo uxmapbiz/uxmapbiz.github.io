@@ -89,12 +89,6 @@ class _ResultPageState extends State<ResultPage> {
                 );
               },
             ),
-            // ---- Optionally, also show as SelectableText for manual copy ----
-            const SizedBox(height: 12),
-            SelectableText(
-              copyText,
-              style: const TextStyle(fontSize: 14, color: Colors.grey),
-            ),
           ],
         );
 
@@ -104,7 +98,13 @@ class _ResultPageState extends State<ResultPage> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Analysis Result')),
+      appBar: AppBar(
+        title: const Text('Analysis Result'),
+        backgroundColor: Colors.white,   // <-- Header background
+        foregroundColor: Colors.black,   // <-- Text/icon color for contrast
+        elevation: 1,                    
+      ),
+
       backgroundColor: Colors.white,
       body: Row(
         children: [
