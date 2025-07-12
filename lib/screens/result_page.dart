@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../widgets/side_nav.dart';
 
 class ResultPage extends StatefulWidget {
@@ -13,11 +14,12 @@ class _ResultPageState extends State<ResultPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Expect a Map (from backend API JSON)
     final result =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
 
     Widget content;
+    String copyText = ''; // <-- For clipboard
+
     switch (_selectedIndex) {
       case 0:
         content = const Text(
@@ -26,13 +28,20 @@ class _ResultPageState extends State<ResultPage> {
         );
         break;
       case 1:
-        // Only show summary, NOT elements
         final aiAnalysis =
             result?['ai_analysis'] as Map<String, dynamic>? ?? {};
         final summary = aiAnalysis['summary'] ?? '';
         final uxScore = aiAnalysis['ux_score'];
         final reason = aiAnalysis['reason'] ?? '';
         final improvements = aiAnalysis['improvements'] ?? '';
+
+        // Combine all for easy copy
+        copyText = [
+          if (uxScore != null) 'UX Score: $uxScore/100',
+          if (summary.isNotEmpty) 'Summary: $summary',
+          if (reason.isNotEmpty) 'Reason: $reason',
+          if (improvements.isNotEmpty) 'Improvement Suggestions: $improvements',
+        ].join('\n\n');
 
         content = Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -64,11 +73,29 @@ class _ResultPageState extends State<ResultPage> {
               Text(
                 'Improvement Suggestions:',
                 style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-            ),
+              ),
               const SizedBox(height: 8),
               Text(improvements, style: const TextStyle(fontSize: 16)),
             ],
-          ], 
+            
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.copy),
+              label: const Text('Copy to Clipboard'),
+              onPressed: () {
+                Clipboard.setData(ClipboardData(text: copyText));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Copied to clipboard!')),
+                );
+              },
+            ),
+            // ---- Optionally, also show as SelectableText for manual copy ----
+            const SizedBox(height: 12),
+            SelectableText(
+              copyText,
+              style: const TextStyle(fontSize: 14, color: Colors.grey),
+            ),
+          ],
         );
 
         break;
@@ -78,6 +105,7 @@ class _ResultPageState extends State<ResultPage> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Analysis Result')),
+      backgroundColor: Colors.white,
       body: Row(
         children: [
           SideNav(

@@ -12,6 +12,14 @@ const SideNav({
 
   @override
   Widget build(BuildContext context) {
+    return Container(
+      width: 220, // or your preferred width
+      color: Colors.green[100], // <-- light green background
+      child: /* ... your side nav code ... */
+    );
+  
+
+
     return NavigationRail(
       selectedIndex: selectedIndex,
       onDestinationSelected: (index) {
@@ -38,4 +46,3 @@ const SideNav({
       ],
     );
   }
-}
