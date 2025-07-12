@@ -4,45 +4,33 @@ class SideNav extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onDestinationSelected;
 
-const SideNav({
-  super.key,
-  required this.selectedIndex,
-  required this.onDestinationSelected,
-});
+  const SideNav({
+    super.key,
+    required this.selectedIndex,
+    required this.onDestinationSelected,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 220, // or your preferred width
-      color: Colors.green[100], // <-- light green background
-      child: /* ... your side nav code ... */
-    );
-  
-
-
-    return NavigationRail(
-      selectedIndex: selectedIndex,
-      onDestinationSelected: (index) {
-        onDestinationSelected(index);
-        if (index == 2) {
-          // Go home if "Go Home" is selected
-          Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
-        }
-      },
-      labelType: NavigationRailLabelType.selected,
-      destinations: const [
-        NavigationRailDestination(
-          icon: Icon(Icons.map),
-          label: Text('User Map Journey'),
-        ),
-        NavigationRailDestination(
-          icon: Icon(Icons.analytics),
-          label: Text('UX Score & Results'),
-        ),
-        NavigationRailDestination(
-          icon: Icon(Icons.home),
-          label: Text('Go Home'),
-        ),
-      ],
-    );
-  }
+      width: 220,
+      color: Colors.green[100], // Light green background
+      child: NavigationRail(
+        selectedIndex: selectedIndex,
+        onDestinationSelected: onDestinationSelected,
+        labelType: NavigationRailLabelType.selected,
+        destinations: const [
+          NavigationRailDestination(
+            icon: Icon(Icons.map),
+            label: Text('User Map Journey'),
+          ),
+          NavigationRailDestination(
+            icon: Icon(Icons.analytics),
+            label: Text('UX Score & Results'),
+          ),
+          // Home button removed!
+        ],
+      ),
+    ); // <--- closes Container
+  }     // <--- closes build method
+}       // <--- closes SideNav class
