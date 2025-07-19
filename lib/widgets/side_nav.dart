@@ -14,11 +14,11 @@ class SideNav extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 220,
-      color: Colors.green[100], // Light green background
+      color: const Color.fromARGB(255, 3, 255, 99),
       child: NavigationRail(
         selectedIndex: selectedIndex,
         onDestinationSelected: onDestinationSelected,
-        labelType: NavigationRailLabelType.selected,
+        labelType: NavigationRailLabelType.all,
         destinations: const [
           NavigationRailDestination(
             icon: Icon(Icons.map),
@@ -28,9 +28,8 @@ class SideNav extends StatelessWidget {
             icon: Icon(Icons.analytics),
             label: Text('UX Score & Results'),
           ),
-          // Home button removed!
         ],
       ),
-    ); // <--- closes Container
-  }     // <--- closes build method
-}       // <--- closes SideNav class
+    ); 
+  }     
+}  

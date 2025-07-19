@@ -1,31 +1,21 @@
 import 'package:flutter/material.dart';
-import '../services/analyzer_service.dart';
 
-class UXMapHomePage extends StatefulWidget {
-  const UXMapHomePage({super.key});
+class HomePage extends StatefulWidget {
+  final void Function(String url) onWebsiteSubmitted;
+  const HomePage({required this.onWebsiteSubmitted, super.key});
 
   @override
-  State<UXMapHomePage> createState() => _UXMapHomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _UXMapHomePageState extends State<UXMapHomePage> {
+class _HomePageState extends State<HomePage> {
   final TextEditingController _urlController = TextEditingController();
-  bool _isLoading = false;
+  final bool _isLoading = false;
 
-  Future<void> _analyzeWebsite() async {
-    setState(() => _isLoading = true);
-
+  void _submit() {
     final url = _urlController.text.trim();
-    try {
-      final result = await AnalyzerService.analyze(url);
-
-      if (!mounted) return; // <--- Add this check!
-
-      Navigator.pushNamed(context, '/result', arguments: result);
-    } catch (e) {
-      // Handle error, optionally show dialog
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
+    if (url.isNotEmpty) {
+      widget.onWebsiteSubmitted(url);
     }
   }
 
@@ -60,6 +50,7 @@ class _UXMapHomePageState extends State<UXMapHomePage> {
                     fillColor: Colors.grey[100],
                   ),
                   keyboardType: TextInputType.url,
+                  onSubmitted: (_) => _submit(),
                 ),
                 _isLoading
                     ? const CircularProgressIndicator()
@@ -67,7 +58,7 @@ class _UXMapHomePageState extends State<UXMapHomePage> {
                         width: 160,
                         height: 48,
                         child: ElevatedButton(
-                          onPressed: _analyzeWebsite,
+                          onPressed: _submit,
                           child: const Text('Analyze'),
                         ),
                       ),
