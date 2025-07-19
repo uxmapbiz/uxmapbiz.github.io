@@ -12,15 +12,15 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _urlController = TextEditingController();
   final bool _isLoading = false;
 
-  void _submit() {
+  Future<void> _submit() async {
     final url = _urlController.text.trim();
-    if (url.isNotEmpty) {
-      widget.onWebsiteSubmitted(url);
-    }
+    if (url.isEmpty) return;
+    widget.onWebsiteSubmitted(url);
   }
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(

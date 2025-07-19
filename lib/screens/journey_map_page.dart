@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 
 class MenuNode {
   final String title;
@@ -59,42 +60,49 @@ class _JourneyMapPageState extends State<JourneyMapPage> {
         padding: const EdgeInsets.all(24.0),
         child: rootNode == null
             ? const Center(child: CircularProgressIndicator())
-            : MenuTree(
-                node: rootNode!,
-                onExpand: (MenuNode node) async {
-                  if (node.children == null) {
-                    final children = await fetchMenus(node.url);
-                    setState(() {
-                      node.children = children;
-                    });
-                  }
-                },
+            : MenuTree(node: rootNode!),
               ),
-      ),
-    );
+      );
   }
 }
 
 class MenuTree extends StatelessWidget {
   final MenuNode node;
-  final Future<void> Function(MenuNode node) onExpand;
 
-  const MenuTree({required this.node, required this.onExpand, super.key});
+  const MenuTree({required this.node, super.key});
+
+  Future<void> _launchUrl(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      debugPrint('Could not launch $url');
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
-    return ExpansionTile(
-      title: Text(node.title),
-      children: node.children == null
-          ? [
-              ListTile(
-                title: const Text('Load submenus...'),
-                onTap: () => onExpand(node),
-              )
-            ]
-          : node.children!
-              .map((child) => MenuTree(node: child, onExpand: onExpand))
-              .toList(),
+    // Show title as heading, then list children as clickable tiles
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          node.title,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 12),
+        if (node.children == null || node.children!.isEmpty)
+          const Text('No menus found.')
+        else
+          ...node.children!.map(
+            (child) => ListTile(
+              title: Text(child.title),
+              subtitle: Text(child.url, style: const TextStyle(color: Colors.blue)),
+              onTap: () => _launchUrl(child.url),
+            ),
+          ),
+      ],
     );
   }
 }

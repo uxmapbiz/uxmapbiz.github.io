@@ -25,20 +25,19 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    Widget mainContent;
-
-    if (currentUrl == null) {
-      // Show search page if no website has been entered
-      mainContent = HomePage(onWebsiteSubmitted: _onWebsiteSubmitted);
-    } else if (selectedIndex == 0) {
-      // Show journey map for the selected website
-      mainContent = JourneyMapPage(websiteUrl: currentUrl!);
-    } else if (selectedIndex == 1) {
-      // Show results for the selected website
-      mainContent = ResultPage(websiteUrl: currentUrl!);
-    } else {
-      mainContent = const Center(child: Text('Unknown page'));
+   if (currentUrl == null) {
+    return HomePage(onWebsiteSubmitted: _onWebsiteSubmitted);
     }
+
+  Widget mainContent;
+  if (selectedIndex == 0) {
+    mainContent = JourneyMapPage(websiteUrl: currentUrl!);
+  } else if (selectedIndex == 1) {
+    mainContent = ResultPage(websiteUrl: currentUrl!);
+  } else {
+    mainContent = const Center(child: Text('Unknown page'));
+  }
+
 
     return Scaffold(
       body: Row(

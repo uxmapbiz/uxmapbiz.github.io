@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import '../widgets/side_nav.dart';
+
 
 class ResultPage extends StatefulWidget {
   final String websiteUrl;
@@ -13,7 +13,6 @@ class ResultPage extends StatefulWidget {
 }
 
 class _ResultPageState extends State<ResultPage> {
-  int _selectedIndex = 1; // Default to 'UX Score & Results'
   Map<String, dynamic>? aiAnalysis;
   bool _loading = true;
   String? _error;
@@ -138,23 +137,9 @@ class _ResultPageState extends State<ResultPage> {
         elevation: 1,
       ),
       backgroundColor: Colors.white,
-      body: Row(
-        children: [
-          SideNav(
-            selectedIndex: _selectedIndex,
-            onDestinationSelected: (index) {
-              setState(() {
-                _selectedIndex = index;
-              });
-            },
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(32.0),
-              child: SingleChildScrollView(child: content),
-            ),
-          ),
-        ],
+      body: Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: SingleChildScrollView(child: content),
       ),
     );
   }
