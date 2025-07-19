@@ -75499,7 +75499,7 @@ A.Mq.prototype={
 ww(a){return this.aci(a)},
 aci(a){var s=0,r=A.R(t.ux),q,p,o,n,m
 var $async$ww=A.N(function(b,c){if(b===1)return A.O(c,r)
-while(true)switch(s){case 0:p=A.eE("https://your-backend-url/crawl_menus",0,null)
+while(true)switch(s){case 0:p=A.eE("https://uxmap-backend.onrender.com/crawl_menus",0,null)
 o=t.N
 n=A.ae(["Content-Type","application/json"],o,o)
 s=3
@@ -75571,7 +75571,7 @@ ui(){var s=0,r=A.R(t.H),q=1,p=[],o=this,n,m,l,k,j,i,h,g
 var $async$ui=A.N(function(a,b){if(a===1){p.push(b)
 s=q}while(true)switch(s){case 0:o.ai(new A.aeG(o))
 q=3
-k=A.eE("https://your-backend-url/analyze",0,null)
+k=A.eE("https://https://uxmap-backend.onrender.com/analyze",0,null)
 j=t.N
 i=A.ae(["Content-Type","application/json"],j,j)
 s=6

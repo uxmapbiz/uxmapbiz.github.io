@@ -30,9 +30,8 @@ class _ResultPageState extends State<ResultPage> {
     });
 
     try {
-      // Adjust endpoint to your deployed backend
-      final response = await http.post(
-        Uri.parse('https://your-backend-url/analyze'),
+        final response = await http.post(
+        Uri.parse('https://https://uxmap-backend.onrender.com/analyze'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'url': widget.websiteUrl}),
       );
