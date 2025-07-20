@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
-  final void Function(String url) onWebsiteSubmitted;
+  final Future<void> Function(String url) onWebsiteSubmitted;
   const HomePage({required this.onWebsiteSubmitted, super.key});
 
   @override
@@ -10,12 +10,14 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final TextEditingController _urlController = TextEditingController();
-  final bool _isLoading = false;
+  bool _isLoading = false;
 
   Future<void> _submit() async {
     final url = _urlController.text.trim();
     if (url.isEmpty) return;
-    widget.onWebsiteSubmitted(url);
+    setState(() { _isLoading = true; });
+    await widget.onWebsiteSubmitted(url);
+    setState(() { _isLoading = false; });
   }
 
   @override

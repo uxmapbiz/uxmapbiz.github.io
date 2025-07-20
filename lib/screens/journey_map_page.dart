@@ -1,77 +1,19 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
-class MenuNode {
-  final String title;
-  final String url;
-  List<MenuNode>? children;
-
-  MenuNode({required this.title, required this.url, this.children});
-}
-
-class JourneyMapPage extends StatefulWidget {
+class JourneyMapPage extends StatelessWidget {
+  final List<dynamic> clickableElements;
   final String websiteUrl;
-  const JourneyMapPage({required this.websiteUrl, super.key});
 
-  @override
-  State<JourneyMapPage> createState() => _JourneyMapPageState();
-}
+  const JourneyMapPage({
+    required this.clickableElements,
+    required this.websiteUrl,
+    super.key,
+  });
 
-class _JourneyMapPageState extends State<JourneyMapPage> {
-  MenuNode? rootNode;
-
-  Future<List<MenuNode>> fetchMenus(String url) async {
-    final response = await http.post(
-      Uri.parse('https://uxmap-backend.onrender.com/crawl_menus'), 
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'url': url}),
-    );
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      final menus = data['menus'] as List;
-      return menus
-          .map((item) => MenuNode(title: item['title'], url: item['url']))
-          .toList();
-    } else {
-      throw Exception('Failed to load menus');
-    }
-  }
-
-  Future<void> _loadRootMenus(String url) async {
-    final children = await fetchMenus(url);
-    setState(() {
-      rootNode = MenuNode(title: url, url: url, children: children);
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _loadRootMenus(widget.websiteUrl);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Journey Map')),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: rootNode == null
-            ? const Center(child: CircularProgressIndicator())
-            : MenuTree(node: rootNode!),
-              ),
-      );
-  }
-}
-
-class MenuTree extends StatelessWidget {
-  final MenuNode node;
-
-  const MenuTree({required this.node, super.key});
-
-  Future<void> _launchUrl(String url) async {
+  // Helper for launching URLs
+  Future<void> _launchUrl(String? url) async {
+    if (url == null || url.isEmpty) return;
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
@@ -80,29 +22,62 @@ class MenuTree extends StatelessWidget {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
-    // Show title as heading, then list children as clickable tiles
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          node.title,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 12),
-        if (node.children == null || node.children!.isEmpty)
-          const Text('No menus found.')
-        else
-          ...node.children!.map(
-            (child) => ListTile(
-              title: Text(child.title),
-              subtitle: Text(child.url, style: const TextStyle(color: Colors.blue)),
-              onTap: () => _launchUrl(child.url),
+    // Separate promoted and other links
+    final promoted = clickableElements.where((e) => e['promoted'] == true).toList();
+    final others = clickableElements.where((e) => e['promoted'] != true).toList();
+
+    // Optional: Sort by DOM index (already in backend)
+    promoted.sort((a, b) => (a['position']['index'] as int).compareTo(b['position']['index'] as int));
+    others.sort((a, b) => (a['position']['index'] as int).compareTo(b['position']['index'] as int));
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Journey Map'),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(18.0),
+        child: ListView(
+          children: [
+            Text(
+              websiteUrl,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-          ),
-      ],
+            const SizedBox(height: 16),
+            if (promoted.isNotEmpty) ...[
+              const Text(
+                'Main Navigation',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.blueAccent),
+              ),
+              const SizedBox(height: 8),
+              ...promoted.map((item) => ListTile(
+                    leading: const Icon(Icons.star, color: Colors.orange),
+                    title: Text(item['text'], style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
+                    subtitle: item['href'] != null ? Text(item['href']) : null,
+                    trailing: Text(item['type']),
+                    onTap: () => _launchUrl(item['href']),
+                  )),
+              const Divider(),
+            ],
+            if (others.isNotEmpty) ...[
+              const Text(
+                'Other Clickable Elements',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black54),
+              ),
+              const SizedBox(height: 8),
+              ...others.map((item) => ListTile(
+                    title: Text(item['text']),
+                    subtitle: item['href'] != null ? Text(item['href'], style: const TextStyle(color: Colors.blue)) : null,
+                    trailing: Text(item['type']),
+                    onTap: () => _launchUrl(item['href']),
+                  )),
+            ],
+          ],
+        ),
+      ),
     );
   }
 }
