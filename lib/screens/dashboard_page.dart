@@ -58,31 +58,25 @@ class _DashboardPageState extends State<DashboardPage> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    if (currentUrl == null) {
-      // HomePage now expects a Future callback
-      return HomePage(onWebsiteSubmitted: _onWebsiteSubmitted);
-    }
-
-    Widget mainContent;
-    if (loading) {
-      mainContent = const Center(child: CircularProgressIndicator());
-    } else if (errorMessage != null) {
-      mainContent = Center(child: Text(errorMessage!));
-    } else if (selectedIndex == 0) {
-      mainContent = JourneyMapPage(
-        websiteUrl: currentUrl!,
-        clickableElements: clickableElements ?? [],
-      );
-    } else if (selectedIndex == 1) {
-      mainContent = ResultPage(
-        websiteUrl: currentUrl!,
-        aiAnalysis: aiAnalysis,
-      );
-    } else {
-      mainContent = const Center(child: Text('Unknown page'));
-    }
+@override
+Widget build(BuildContext context) {
+  Widget mainContent;
+  if (selectedIndex == 2 || currentUrl == null) {
+    // HomePage: always show this if "Home" icon selected or no current URL
+    mainContent = HomePage(onWebsiteSubmitted: _onWebsiteSubmitted);
+  } else if (selectedIndex == 0) {
+    mainContent = JourneyMapPage(
+      websiteUrl: currentUrl!,
+      clickableElements: clickableElements ?? [],
+    );
+  } else if (selectedIndex == 1) {
+    mainContent = ResultPage(
+      websiteUrl: currentUrl!,
+      aiAnalysis: aiAnalysis,
+    );
+  } else {
+    mainContent = const Center(child: Text('Unknown page'));
+  }
 
     return Scaffold(
       body: Row(
@@ -92,6 +86,14 @@ class _DashboardPageState extends State<DashboardPage> {
             onDestinationSelected: (int idx) {
               setState(() {
                 selectedIndex = idx;
+                if (idx == 2) {
+                // Home button pressed: clear everything for new search
+                currentUrl = null;
+                clickableElements = null;
+                aiAnalysis = null;
+                errorMessage = null;
+                loading = false;
+                }
               });
             },
           ),
