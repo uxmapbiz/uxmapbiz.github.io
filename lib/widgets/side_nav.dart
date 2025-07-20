@@ -30,10 +30,10 @@ class SideNav extends StatelessWidget {
           ),
           NavigationRailDestination(
             icon: Icon(Icons.home),
-            label: Text('Home')
-          )
+            label: Text('Home'),
+          ),
         ],
       ),
-    ); 
-  }     
-}  
+    );
+  }
+}
