@@ -60,6 +60,10 @@ class _DashboardPageState extends State<DashboardPage> {
 
 @override
 Widget build(BuildContext context) {
+  if (currentUrl == null) {
+    return HomePage(onWebsiteSubmitted: _onWebsiteSubmitted);
+  }
+
   Widget mainContent;
   if (selectedIndex == 2 || currentUrl == null) {
     // HomePage: always show this if "Home" icon selected or no current URL
