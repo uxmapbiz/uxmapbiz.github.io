@@ -28,6 +28,10 @@ class SideNav extends StatelessWidget {
             icon: Icon(Icons.analytics),
             label: Text('UX Score & Results'),
           ),
+          NavigationRailDestination(
+            icon: Icon(Icons.home),
+            label: Text('Home')
+          )
         ],
       ),
     ); 
